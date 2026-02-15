@@ -2,15 +2,18 @@
  * Tools Tab
  *
  * AI-powered design utilities and mini tools.
- * Photo color extraction, and more tools to come.
+ * Photo color extraction, font pairing, and more.
  */
 
 import { useState } from 'react';
-import { Hammer, Sparkles } from 'lucide-react';
+import { Hammer, Sparkles, Type, ImageIcon } from 'lucide-react';
 import { PhotoExtractor } from '../components/features/PhotoExtractor';
+import { FontPairing } from '../components/tools/FontPairing';
 
 export function ToolsTab() {
-  const [activeExtractor, setActiveExtractor] = useState(null);
+  const [activeTool, setActiveTool] = useState(null);
+
+  const closeTool = () => setActiveTool(null);
 
   return (
     <div className="dm-tab-content dm-tools-tab">
@@ -25,11 +28,40 @@ export function ToolsTab() {
       </div>
 
       <div className="dm-tools-grid">
+        {/* Smart Font Pairing */}
+        <div className="dm-tool-card">
+          <div className="dm-tool-header">
+            <div className="dm-tool-icon dm-tool-icon-typography">
+              <Type size={20} />
+            </div>
+            <div className="dm-tool-info">
+              <h4 className="dm-tool-title">Smart Font Pairing</h4>
+              <p className="dm-tool-description">
+                Select your heading font and get AI-recommended body font pairings with live preview.
+              </p>
+            </div>
+          </div>
+
+          {activeTool === 'fontPairing' ? (
+            <div className="dm-tool-content">
+              <FontPairing onClose={closeTool} />
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="dm-button dm-button-primary dm-tool-launch"
+              onClick={() => setActiveTool('fontPairing')}
+            >
+              Launch Tool
+            </button>
+          )}
+        </div>
+
         {/* Photo Color Extractor */}
         <div className="dm-tool-card">
           <div className="dm-tool-header">
             <div className="dm-tool-icon dm-tool-icon-photo">
-              <Sparkles size={20} />
+              <ImageIcon size={20} />
             </div>
             <div className="dm-tool-info">
               <h4 className="dm-tool-title">Extract Colors from Photo</h4>
@@ -39,22 +71,22 @@ export function ToolsTab() {
             </div>
           </div>
 
-          {activeExtractor === 'photo' ? (
+          {activeTool === 'photo' ? (
             <div className="dm-tool-content">
-              <PhotoExtractor onClose={() => setActiveExtractor(null)} />
+              <PhotoExtractor onClose={closeTool} />
             </div>
           ) : (
             <button
               type="button"
               className="dm-button dm-button-primary dm-tool-launch"
-              onClick={() => setActiveExtractor('photo')}
+              onClick={() => setActiveTool('photo')}
             >
               Launch Tool
             </button>
           )}
         </div>
 
-        {/* Placeholder for future tools */}
+        {/* Coming Soon Placeholder */}
         <div className="dm-tool-card dm-tool-coming-soon">
           <div className="dm-tool-header">
             <div className="dm-tool-icon dm-tool-icon-muted">
@@ -63,7 +95,7 @@ export function ToolsTab() {
             <div className="dm-tool-info">
               <h4 className="dm-tool-title">More Tools Coming Soon</h4>
               <p className="dm-tool-description">
-                Palette generators, contrast fixers, and more AI-powered design utilities.
+                Contrast fixer, accessible palette generator, design token scales, and more.
               </p>
             </div>
           </div>
