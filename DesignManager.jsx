@@ -4,8 +4,8 @@
  * Main component that renders the floating design panel with tabs.
  */
 
-import { useState, useEffect, useCallback } from 'react';
-import { Palette, Type, Layers, Sparkles, Download } from 'lucide-react';
+import { useState, useEffect, useCallback, useRef, Component } from 'react';
+import { Palette, Type, Layers, Sparkles, Download, AlertTriangle, RefreshCw } from 'lucide-react';
 import { DesignManagerProvider, useDesignManagerContext } from './context/DesignManagerContext';
 import { usePanelState } from './hooks/usePanelState';
 import { FloatingPanel } from './components/floating-panel/FloatingPanel';
@@ -16,6 +16,52 @@ import { SurfacesTab } from './tabs/SurfacesTab';
 import { AITab } from './tabs/AITab';
 import { ExportTab } from './tabs/ExportTab';
 import { TABS, DEFAULT_STORAGE_KEY, DEFAULT_PANEL_KEY } from './lib/constants';
+
+/**
+ * Error Boundary for DesignManager panel
+ */
+class PanelErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error('DesignManager error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="dm-error-fallback">
+          <AlertTriangle size={24} />
+          <p>Something went wrong.</p>
+          <div className="dm-error-buttons">
+            <button
+              className="dm-error-retry"
+              onClick={() => this.setState({ hasError: false, error: null })}
+            >
+              <RefreshCw size={14} />
+              Try Again
+            </button>
+            <button
+              className="dm-error-close"
+              onClick={() => this.props.onClose?.()}
+            >
+              Close Panel
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
 
 // Import styles
 import './styles/design-manager.css';
@@ -193,8 +239,8 @@ export function DesignManager({
   onChange,
   storageKey = DEFAULT_STORAGE_KEY,
   panelStorageKey = DEFAULT_PANEL_KEY,
-  position = 'bottom-right',
-  defaultOpen = true,
+  position = 'center',  // Default to center for predictable UX
+  defaultOpen = false,  // Default to false so trigger shows first
   apiKey,
   apiEndpoint = '/api/design-manager/chat',
 }) {
@@ -204,18 +250,54 @@ export function DesignManager({
     defaultOpen,
   });
 
+  // Use refs to avoid dependency on panelState object (which changes every render)
+  const openRef = useRef(panelState.open);
+  const closeRef = useRef(panelState.close);
+  const toggleRef = useRef(panelState.toggle);
+
+  // Keep refs updated with latest functions
+  useEffect(() => {
+    openRef.current = panelState.open;
+    closeRef.current = panelState.close;
+    toggleRef.current = panelState.toggle;
+  });
+
+  // Listen for global events to open/close panel from external components
+  // Empty dependency array = stable listeners that don't re-register
+  useEffect(() => {
+    const handleOpen = () => openRef.current();
+    const handleClose = () => closeRef.current();
+    const handleToggle = () => toggleRef.current();
+
+    window.addEventListener('design-manager:open', handleOpen);
+    window.addEventListener('design-manager:close', handleClose);
+    window.addEventListener('design-manager:toggle', handleToggle);
+
+    return () => {
+      window.removeEventListener('design-manager:open', handleOpen);
+      window.removeEventListener('design-manager:close', handleClose);
+      window.removeEventListener('design-manager:toggle', handleToggle);
+    };
+  }, []); // Empty deps - listeners are stable
+
   return (
     <DesignManagerProvider
       initialTheme={initialTheme}
       onChange={onChange}
       storageKey={storageKey}
     >
-      <DesignManagerPanel
-        apiKey={apiKey}
-        apiEndpoint={apiEndpoint}
-        onClose={panelState.close}
-        panelState={panelState}
-      />
+      {panelState.isOpen ? (
+        <PanelErrorBoundary onClose={panelState.close}>
+          <DesignManagerPanel
+            apiKey={apiKey}
+            apiEndpoint={apiEndpoint}
+            onClose={panelState.close}
+            panelState={panelState}
+          />
+        </PanelErrorBoundary>
+      ) : (
+        <DesignManagerTrigger onClick={panelState.open} />
+      )}
     </DesignManagerProvider>
   );
 }

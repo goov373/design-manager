@@ -6,7 +6,7 @@
  */
 
 import { useState } from 'react';
-import { Eye, EyeOff, ImageIcon } from 'lucide-react';
+import { Eye, EyeOff, ImageIcon, Wand2 } from 'lucide-react';
 import { useDesignManagerContext } from '../context/DesignManagerContext';
 import { COLOR_TOKEN_GROUPS, getCSSVarName } from '../lib/constants';
 import { ColorPicker } from '../components/controls/ColorPicker';
@@ -14,6 +14,55 @@ import { ContrastBadge } from '../components/controls/ContrastBadge';
 import { ExpandableSection } from '../components/controls/ExpandableSection';
 import { PhotoExtractor } from '../components/features/PhotoExtractor';
 import { simulateColorBlindness, CVD_TYPES } from '../lib/color-blindness';
+import { parseToOklch } from '../lib/color-utils';
+
+/**
+ * Generate dark mode color from a light mode color
+ * Inverts lightness intelligently based on the token type
+ */
+function generateDarkModeColor(color, tokenName) {
+  const oklch = parseToOklch(color);
+  if (!oklch) return color;
+
+  const l = oklch.l || 0;
+  const c = oklch.c || 0;
+  const h = oklch.h || 0;
+
+  let newL;
+  let newC = c;
+
+  // Background tokens: invert to dark
+  if (tokenName === 'background' || tokenName === 'card' || tokenName === 'popover' || tokenName === 'muted') {
+    // Light backgrounds (0.9+) become dark (0.15-0.30)
+    newL = Math.max(0.12, Math.min(0.35, 1 - l));
+  }
+  // Foreground/text tokens: invert to light
+  else if (tokenName.includes('Foreground') || tokenName === 'foreground') {
+    // Dark text becomes light text
+    newL = Math.max(0.85, Math.min(0.98, 1 - l));
+  }
+  // Border/input tokens: make them visible on dark backgrounds
+  else if (tokenName === 'border' || tokenName === 'input') {
+    newL = Math.max(0.30, Math.min(0.45, 1 - l));
+  }
+  // Accent colors (primary, secondary, accent, ring): boost lightness slightly for dark mode
+  else if (tokenName === 'primary' || tokenName === 'secondary' || tokenName === 'accent' || tokenName === 'ring') {
+    // Increase lightness slightly and boost saturation for vibrancy on dark
+    newL = Math.min(0.85, l + 0.1);
+    newC = Math.min(0.35, c * 1.1); // Slight saturation boost
+  }
+  // Destructive: keep visible but adjust for dark
+  else if (tokenName === 'destructive') {
+    newL = Math.min(0.75, l + 0.12);
+    newC = Math.min(0.35, c * 1.05);
+  }
+  // Default: simple inversion
+  else {
+    newL = 1 - l;
+  }
+
+  return `oklch(${newL.toFixed(3)} ${newC.toFixed(3)} ${h.toFixed(3)})`;
+}
 
 export function ColorsTab() {
   const { colors, darkMode, setColor } = useDesignManagerContext();
@@ -21,6 +70,19 @@ export function ColorsTab() {
   const [showPhotoExtractor, setShowPhotoExtractor] = useState(false);
   const currentColors = darkMode ? colors.dark : colors.light;
   const backgroundColor = currentColors.background;
+
+  /**
+   * Generate all dark mode colors from current light mode colors
+   */
+  const handleGenerateDarkMode = () => {
+    const lightColors = colors.light;
+
+    // Generate dark mode version of each light color
+    Object.entries(lightColors).forEach(([token, color]) => {
+      const darkColor = generateDarkModeColor(color, token);
+      setColor(token, darkColor, 'dark');
+    });
+  };
 
   // Get display color (with CVD simulation if active)
   const getDisplayColor = (color) => {
@@ -140,11 +202,9 @@ export function ColorsTab() {
         <button
           type="button"
           className="dm-button dm-button-secondary dm-button-small"
-          onClick={() => {
-            // Copy all light colors to dark with adjusted lightness
-            // This is a simple implementation - could be smarter
-          }}
+          onClick={handleGenerateDarkMode}
         >
+          <Wand2 size={14} />
           Generate dark mode from light
         </button>
       </div>

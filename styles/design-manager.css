@@ -9,10 +9,37 @@
    Panel Container
    ======================================== */
 
+/* Fixed wrapper covers viewport - panel stays in place while scrolling */
+.dm-fixed-wrapper {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;  /* Allow clicks to pass through to page */
+  z-index: 10000;
+}
+
+.dm-fixed-wrapper > * {
+  pointer-events: auto;  /* Re-enable clicks on the panel itself */
+}
+
 .dm-floating-panel {
   font-family: system-ui, -apple-system, sans-serif;
   font-size: 14px;
   line-height: 1.5;
+  will-change: transform;
+  transition: box-shadow 0.2s ease;
+}
+
+/* Visual lift during drag - enterprise polish */
+.dm-floating-panel.dm-dragging {
+  box-shadow:
+    0 25px 50px -12px rgb(0 0 0 / 0.25),
+    0 12px 24px -8px rgb(0 0 0 / 0.15),
+    0 0 0 1px rgb(0 0 0 / 0.05);
+}
+
+.dm-floating-panel.dm-dragging .dm-panel-container {
+  transform: scale(1.005);
+  transition: transform 0.15s ease;
 }
 
 .dm-panel-container {
@@ -27,6 +54,92 @@
     0 2px 4px -2px rgb(0 0 0 / 0.1),
     0 0 0 1px rgb(0 0 0 / 0.05);
   overflow: hidden;
+}
+
+/* Visible resize handle indicator */
+.dm-resize-handle {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  cursor: nwse-resize;
+  opacity: 0.3;
+  transition: opacity 0.15s ease;
+  z-index: 10;
+}
+
+.dm-resize-handle::before {
+  content: '';
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid var(--dm-text-muted, #666);
+  border-bottom: 2px solid var(--dm-text-muted, #666);
+  border-radius: 1px;
+}
+
+.dm-resize-handle:hover {
+  opacity: 0.7;
+}
+
+.dm-floating-panel.dm-minimized .dm-resize-handle {
+  display: none;
+}
+
+/* Error fallback UI */
+.dm-error-fallback {
+  position: fixed;
+  bottom: 80px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 24px;
+  background: var(--dm-bg, #ffffff);
+  border: 1px solid var(--dm-border, #e5e5e5);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
+  z-index: 10001;  /* Above panel and trigger */
+  color: var(--dm-text, #1a1a1a);
+}
+
+.dm-error-fallback svg {
+  color: #ef4444;
+}
+
+.dm-error-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.dm-error-fallback button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: opacity 0.15s;
+}
+
+.dm-error-retry {
+  background: var(--dm-primary, #3b82f6);
+  color: white;
+}
+
+.dm-error-close {
+  background: var(--dm-hover, #f3f4f6);
+  color: var(--dm-text, #1a1a1a);
+}
+
+.dm-error-fallback button:hover {
+  opacity: 0.85;
 }
 
 .dark .dm-panel-container {
@@ -60,8 +173,19 @@
   padding: 8px 12px;
   background: var(--dm-bg);
   border-bottom: 1px solid var(--dm-border);
-  cursor: move;
+  cursor: grab;
   user-select: none;
+  transition: background 0.15s ease;
+}
+
+.dm-panel-header:hover {
+  background: var(--dm-hover);
+}
+
+.dm-panel-header:active,
+.dm-floating-panel.dm-dragging .dm-panel-header {
+  cursor: grabbing;
+  background: var(--dm-active);
 }
 
 .dm-header-left {
@@ -94,7 +218,7 @@
   border-radius: 6px;
   color: var(--dm-text-muted);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background 0.15s ease, color 0.15s ease, opacity 0.15s ease;
 }
 
 .dm-header-button:hover {
@@ -140,7 +264,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 12px;
+  padding: 8px 6px;
   background: transparent;
   border: none;
   border-radius: 6px;
@@ -148,7 +272,7 @@
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background 0.15s ease, color 0.15s ease;
   flex: 1;
   justify-content: center;
 }
@@ -1035,27 +1159,77 @@
 
 .dm-trigger-button {
   position: fixed;
-  bottom: 24px;
+  bottom: 80px; /* Positioned above ViewToggle button */
   right: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
-  background: var(--dm-primary);
-  border: none;
+  width: 52px;
+  height: 52px;
+  background: linear-gradient(135deg, var(--dm-primary) 0%, var(--dm-accent, var(--dm-primary)) 100%);
+  border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 50%;
   color: var(--dm-primary-foreground);
   cursor: pointer;
   box-shadow:
-    0 4px 6px -1px rgb(0 0 0 / 0.1),
-    0 2px 4px -2px rgb(0 0 0 / 0.1);
-  transition: all 0.15s ease;
-  z-index: 9998;
+    0 4px 12px -2px rgb(0 0 0 / 0.2),
+    0 2px 6px -2px rgb(0 0 0 / 0.1),
+    0 0 0 4px rgba(var(--dm-primary-rgb, 59, 130, 246), 0.15);
+  transition: all 0.2s ease;
+  z-index: 10000;  /* High enough to be above all page content */
+  animation: dm-trigger-pulse 2s ease-in-out 3; /* Pulse 3 times on first appear */
+}
+
+@keyframes dm-trigger-pulse {
+  0%, 100% {
+    box-shadow:
+      0 4px 12px -2px rgb(0 0 0 / 0.2),
+      0 2px 6px -2px rgb(0 0 0 / 0.1),
+      0 0 0 4px rgba(var(--dm-primary-rgb, 59, 130, 246), 0.15);
+  }
+  50% {
+    box-shadow:
+      0 4px 12px -2px rgb(0 0 0 / 0.2),
+      0 2px 6px -2px rgb(0 0 0 / 0.1),
+      0 0 0 12px rgba(var(--dm-primary-rgb, 59, 130, 246), 0.1);
+  }
 }
 
 .dm-trigger-button:hover {
-  transform: scale(1.05);
+  transform: scale(1.1);
+  box-shadow:
+    0 6px 16px -2px rgb(0 0 0 / 0.25),
+    0 4px 8px -2px rgb(0 0 0 / 0.15),
+    0 0 0 4px rgba(var(--dm-primary-rgb, 59, 130, 246), 0.2);
+}
+
+.dm-trigger-button:active {
+  transform: scale(0.95);
+}
+
+/* Tooltip for trigger button */
+.dm-trigger-button::before {
+  content: 'Design Manager';
+  position: absolute;
+  right: 60px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--dm-bg);
+  color: var(--dm-text);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.15);
+  border: 1px solid var(--dm-border);
+}
+
+.dm-trigger-button:hover::before {
+  opacity: 1;
 }
 
 /* ========================================

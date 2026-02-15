@@ -4,7 +4,7 @@
  * Chat interface and message components for AI theme generation.
  */
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { Send, Check, Loader2, AlertCircle } from 'lucide-react';
 
 /**
@@ -183,11 +183,19 @@ export function AIChat({
   placeholder,
 }) {
   const messagesEndRef = useRef(null);
+  const prevMessagesLengthRef = useRef(messages.length);
 
-  // Scroll to bottom when messages change
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  // Scroll to bottom only when new messages are added (not on initial mount)
+  useLayoutEffect(() => {
+    const prevLength = prevMessagesLengthRef.current;
+    const currentLength = messages.length;
+    prevMessagesLengthRef.current = currentLength;
+
+    // Only scroll if messages were added (not on mount or when clearing)
+    if (currentLength > prevLength && currentLength > 0) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages.length]);
 
   return (
     <div className="dm-ai-chat-container">

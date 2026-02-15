@@ -15,6 +15,41 @@ import {
   STORAGE_DEBOUNCE,
 } from '../lib/constants';
 
+// Version key to detect fresh integrations
+const PANEL_STATE_VERSION = 'dm-panel-v8'; // Bumped to v8 - fixed positioning
+
+// Edge snapping configuration
+const SNAP_THRESHOLD = 20; // Distance in pixels to trigger snap
+const SNAP_MARGIN = 24;    // Margin from edge when snapped
+
+/**
+ * Apply magnetic snap-to-edge behavior
+ * Snaps panel to edges when within threshold distance
+ */
+function snapToEdges(pos, windowWidth, windowHeight, panelWidth, panelHeight) {
+  let { x, y } = pos;
+
+  // Snap to left edge
+  if (x < SNAP_THRESHOLD + SNAP_MARGIN) {
+    x = SNAP_MARGIN;
+  }
+  // Snap to right edge
+  else if (x > windowWidth - panelWidth - SNAP_THRESHOLD - SNAP_MARGIN) {
+    x = windowWidth - panelWidth - SNAP_MARGIN;
+  }
+
+  // Snap to top edge
+  if (y < SNAP_THRESHOLD + SNAP_MARGIN) {
+    y = SNAP_MARGIN;
+  }
+  // Snap to bottom edge
+  else if (y > windowHeight - panelHeight - SNAP_THRESHOLD - SNAP_MARGIN) {
+    y = windowHeight - panelHeight - SNAP_MARGIN;
+  }
+
+  return { x, y };
+}
+
 /**
  * Hook for managing floating panel state
  *
@@ -26,15 +61,30 @@ import {
  */
 export function usePanelState({
   storageKey = DEFAULT_PANEL_KEY,
-  position = 'bottom-right',
-  defaultOpen = true,
+  position = 'center',  // Default to center of screen
+  defaultOpen = false,
 } = {}) {
   // Load initial state from localStorage or use defaults
   const getInitialState = () => {
     try {
-      const stored = localStorage.getItem(storageKey);
-      if (stored) {
-        const parsed = JSON.parse(stored);
+      const storedVersion = localStorage.getItem('design-manager-version');
+      const storedState = localStorage.getItem(storageKey);
+
+      // Update version if needed - reset to defaults (clean slate for new features)
+      if (storedVersion !== PANEL_STATE_VERSION) {
+        localStorage.setItem('design-manager-version', PANEL_STATE_VERSION);
+        // Clear old stored state on version change for clean UX
+        localStorage.removeItem(storageKey);
+        return {
+          isOpen: defaultOpen,
+          isMinimized: false,
+          position: calculateInitialPosition(position),
+          size: DEFAULT_PANEL_SIZE,
+        };
+      }
+
+      if (storedState) {
+        const parsed = JSON.parse(storedState);
         return {
           isOpen: parsed.isOpen ?? defaultOpen,
           isMinimized: parsed.isMinimized ?? false,
@@ -56,14 +106,36 @@ export function usePanelState({
 
   const [state, setState] = useState(getInitialState);
   const saveTimeoutRef = useRef(null);
+  const resizeTimeoutRef = useRef(null);
+  const hasInitialized = useRef(false);
+
+  // Ensure position is correctly calculated on client-side after mount
+  // This handles SSR/hydration mismatch where window dimensions may differ
+  useEffect(() => {
+    if (!hasInitialized.current) {
+      hasInitialized.current = true;
+      // Recalculate center position with actual window dimensions
+      setState((prev) => ({
+        ...prev,
+        position: calculateCenterPosition(prev.size),
+      }));
+    }
+  }, []);
 
   // Calculate initial position based on named position
   function calculateInitialPosition(positionName) {
-    const pos = PANEL_POSITIONS[positionName] || PANEL_POSITIONS['bottom-right'];
+    const pos = PANEL_POSITIONS[positionName] || PANEL_POSITIONS['center'];
     const windowWidth = typeof window !== 'undefined' ? window.innerWidth : 1200;
     const windowHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
 
     let x, y;
+
+    // Center position - calculate dynamically
+    if (pos.center) {
+      x = Math.max(24, (windowWidth - DEFAULT_PANEL_SIZE.width) / 2);
+      y = Math.max(24, (windowHeight - DEFAULT_PANEL_SIZE.height) / 2);
+      return { x, y };
+    }
 
     if (pos.right !== undefined) {
       x = windowWidth - DEFAULT_PANEL_SIZE.width - pos.right;
@@ -108,6 +180,17 @@ export function usePanelState({
     };
   }
 
+  // Calculate center position for current viewport
+  function calculateCenterPosition(panelSize) {
+    const windowWidth = typeof window !== 'undefined' ? window.innerWidth : 1200;
+    const windowHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
+
+    return {
+      x: Math.max(24, (windowWidth - panelSize.width) / 2),
+      y: Math.max(24, (windowHeight - panelSize.height) / 2),
+    };
+  }
+
   // Save state to localStorage (debounced)
   useEffect(() => {
     if (saveTimeoutRef.current) {
@@ -129,31 +212,76 @@ export function usePanelState({
     };
   }, [state, storageKey]);
 
-  // Handle window resize to keep panel in bounds
+  // Handle window resize to keep panel in bounds (debounced for performance)
   useEffect(() => {
     function handleResize() {
-      setState((prev) => ({
-        ...prev,
-        position: validatePosition(prev.position) || prev.position,
-      }));
+      // Debounce resize events to prevent jank
+      if (resizeTimeoutRef.current) {
+        clearTimeout(resizeTimeoutRef.current);
+      }
+
+      resizeTimeoutRef.current = setTimeout(() => {
+        setState((prev) => ({
+          ...prev,
+          position: validatePosition(prev.position) || prev.position,
+        }));
+      }, 100); // 100ms debounce
     }
 
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    return () => {
+      if (resizeTimeoutRef.current) {
+        clearTimeout(resizeTimeoutRef.current);
+      }
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
-  // Actions
+  // Helper to immediately persist state (for critical changes like open/close)
+  const persistImmediately = useCallback((newState) => {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(newState));
+    } catch (e) {
+      console.warn('Failed to persist panel state:', e);
+    }
+  }, [storageKey]);
+
+  // Actions - open/close immediately persist to avoid race conditions
   const open = useCallback(() => {
-    setState((prev) => ({ ...prev, isOpen: true }));
-  }, []);
+    setState((prev) => {
+      // Always center panel when opening for predictable UX
+      const centeredPosition = calculateCenterPosition(prev.size);
+      const newState = {
+        ...prev,
+        isOpen: true,
+        position: centeredPosition,
+      };
+      persistImmediately(newState); // Flush immediately, don't wait for debounce
+      return newState;
+    });
+  }, [persistImmediately]);
 
   const close = useCallback(() => {
-    setState((prev) => ({ ...prev, isOpen: false }));
-  }, []);
+    setState((prev) => {
+      const newState = { ...prev, isOpen: false };
+      persistImmediately(newState); // Flush immediately
+      return newState;
+    });
+  }, [persistImmediately]);
 
   const toggle = useCallback(() => {
-    setState((prev) => ({ ...prev, isOpen: !prev.isOpen }));
-  }, []);
+    setState((prev) => {
+      const isOpening = !prev.isOpen;
+      const newState = {
+        ...prev,
+        isOpen: isOpening,
+        // Center panel when opening (not when closing)
+        ...(isOpening && { position: calculateCenterPosition(prev.size) }),
+      };
+      persistImmediately(newState); // Flush immediately
+      return newState;
+    });
+  }, [persistImmediately]);
 
   const minimize = useCallback(() => {
     setState((prev) => ({ ...prev, isMinimized: true }));
@@ -168,10 +296,24 @@ export function usePanelState({
   }, []);
 
   const setPosition = useCallback((newPosition) => {
-    setState((prev) => ({
-      ...prev,
-      position: validatePosition(newPosition) || prev.position,
-    }));
+    setState((prev) => {
+      const windowWidth = typeof window !== 'undefined' ? window.innerWidth : 1200;
+      const windowHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
+
+      // Apply edge snapping
+      const snapped = snapToEdges(
+        newPosition,
+        windowWidth,
+        windowHeight,
+        prev.size.width,
+        prev.size.height
+      );
+
+      return {
+        ...prev,
+        position: validatePosition(snapped) || prev.position,
+      };
+    });
   }, []);
 
   const setSize = useCallback((newSize) => {

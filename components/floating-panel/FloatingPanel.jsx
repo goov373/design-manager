@@ -4,7 +4,7 @@
  * Draggable, resizable panel container using react-rnd.
  */
 
-import { useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Rnd } from 'react-rnd';
 import { MIN_PANEL_SIZE, MAX_PANEL_SIZE } from '../../lib/constants';
 
@@ -35,6 +35,8 @@ export function FloatingPanel({
   role,
   'aria-modal': ariaModal,
 }) {
+  const [isDragging, setIsDragging] = useState(false);
+
   // Handle escape key to close
   const handleKeyDown = useCallback(
     (e) => {
@@ -57,32 +59,40 @@ export function FloatingPanel({
   const panelHeight = isMinimized ? 48 : size.height;
 
   return (
-    <Rnd
-      position={position}
-      size={{ width: size.width, height: panelHeight }}
-      minWidth={MIN_PANEL_SIZE.width}
-      minHeight={isMinimized ? 48 : MIN_PANEL_SIZE.height}
-      maxWidth={MAX_PANEL_SIZE.width}
-      maxHeight={MAX_PANEL_SIZE.height}
-      onDragStop={onDragStop}
-      onResizeStop={onResizeStop}
-      enableResizing={!isMinimized}
-      dragHandleClassName="dm-drag-handle"
-      bounds="window"
-      className={`dm-floating-panel ${isMinimized ? 'dm-minimized' : ''} ${className}`}
-      style={{
-        zIndex: 9999,
-      }}
-    >
-      <div
-        className="dm-panel-container"
-        role={role}
-        aria-label={ariaLabel}
-        aria-modal={ariaModal}
+    <div className="dm-fixed-wrapper">
+      <Rnd
+        position={position}
+        size={{ width: size.width, height: panelHeight }}
+        minWidth={MIN_PANEL_SIZE.width}
+        minHeight={isMinimized ? 48 : MIN_PANEL_SIZE.height}
+        maxWidth={MAX_PANEL_SIZE.width}
+        maxHeight={MAX_PANEL_SIZE.height}
+        onDragStart={() => setIsDragging(true)}
+        onDragStop={(e, data) => {
+          setIsDragging(false);
+          onDragStop(e, data);
+        }}
+        onResizeStop={onResizeStop}
+        enableResizing={!isMinimized}
+        dragHandleClassName="dm-drag-handle"
+        bounds="parent"
+        className={`dm-floating-panel ${isMinimized ? 'dm-minimized' : ''} ${isDragging ? 'dm-dragging' : ''} ${className}`}
+        style={{
+          zIndex: 10000,  /* High enough to be above all page content */
+        }}
       >
-        {children}
-      </div>
-    </Rnd>
+        <div
+          className="dm-panel-container"
+          role={role}
+          aria-label={ariaLabel}
+          aria-modal={ariaModal}
+        >
+          {children}
+        </div>
+        {/* Visible resize handle indicator */}
+        {!isMinimized && <div className="dm-resize-handle" aria-hidden="true" />}
+      </Rnd>
+    </div>
   );
 }
 
