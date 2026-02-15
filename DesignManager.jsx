@@ -178,11 +178,12 @@ function DesignManagerPanel({ apiKey, apiEndpoint, onClose, panelState }) {
       />
 
       {!panelState.isMinimized && (
-        <>
-          <div
-            className="dm-tabs"
+        <div className="dm-body">
+          <nav
+            className="dm-sidebar"
             role="tablist"
             aria-label="Design Manager tabs"
+            aria-orientation="vertical"
           >
             {TAB_CONFIG.map(({ id, label, icon: Icon }, index) => (
               <button
@@ -193,16 +194,16 @@ function DesignManagerPanel({ apiKey, apiEndpoint, onClose, panelState }) {
                 aria-selected={activeTab === id}
                 aria-controls={`dm-panel-${id}`}
                 tabIndex={activeTab === id ? 0 : -1}
-                className={`dm-tab ${activeTab === id ? 'dm-active' : ''}`}
+                className={`dm-sidebar-tab ${activeTab === id ? 'dm-active' : ''}`}
                 onClick={() => setActiveTab(id)}
                 onKeyDown={(e) => handleTabKeyDown(e, index)}
                 title={label}
+                aria-label={label}
               >
-                <Icon size={16} aria-hidden="true" />
-                <span className="dm-tab-label">{label}</span>
+                <Icon size={18} aria-hidden="true" />
               </button>
             ))}
-          </div>
+          </nav>
 
           <div
             className="dm-tab-container"
@@ -213,7 +214,7 @@ function DesignManagerPanel({ apiKey, apiEndpoint, onClose, panelState }) {
           >
             {renderTabContent()}
           </div>
-        </>
+        </div>
       )}
     </FloatingPanel>
   );

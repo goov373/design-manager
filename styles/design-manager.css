@@ -249,9 +249,99 @@
 }
 
 /* ========================================
-   Tabs
+   Body Layout (Sidebar + Content)
    ======================================== */
 
+.dm-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;  /* Allow flex children to shrink */
+  overflow: hidden;
+}
+
+/* ========================================
+   Vertical Sidebar Navigation
+   ======================================== */
+
+.dm-sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 48px;
+  padding: 8px 6px;
+  gap: 4px;
+  background: var(--dm-hover);
+  border-right: 1px solid var(--dm-border);
+  flex-shrink: 0;
+}
+
+.dm-sidebar-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: var(--dm-text-muted);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+  position: relative;
+}
+
+.dm-sidebar-tab:hover {
+  background: var(--dm-bg);
+  color: var(--dm-text);
+}
+
+.dm-sidebar-tab.dm-active {
+  background: var(--dm-bg);
+  color: var(--dm-primary);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.08);
+}
+
+.dm-sidebar-tab.dm-active::before {
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 20px;
+  background: var(--dm-primary);
+  border-radius: 0 2px 2px 0;
+}
+
+.dm-sidebar-tab:active {
+  transform: scale(0.92);
+}
+
+/* Tooltip on hover */
+.dm-sidebar-tab::after {
+  content: attr(title);
+  position: absolute;
+  left: calc(100% + 8px);
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 4px 8px;
+  background: var(--dm-text);
+  color: var(--dm-bg);
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  border-radius: 4px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  z-index: 100;
+}
+
+.dm-sidebar-tab:hover::after {
+  opacity: 1;
+}
+
+/* Legacy tab styles (kept for backwards compatibility) */
 .dm-tabs {
   display: flex;
   padding: 4px;
@@ -304,7 +394,9 @@
 .dm-tab-container {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   background: var(--dm-bg);
+  min-width: 0;  /* Allow content to shrink */
 }
 
 .dm-tab-content {
@@ -2549,6 +2641,7 @@
 /* Button press effect */
 .dm-button,
 .dm-tab,
+.dm-sidebar-tab,
 .dm-header-button,
 .dm-preset-card,
 .dm-font-option,
@@ -2592,6 +2685,7 @@
 /* Focus visible ring */
 .dm-button:focus-visible,
 .dm-tab:focus-visible,
+.dm-sidebar-tab:focus-visible,
 .dm-header-button:focus-visible,
 .dm-select:focus-visible,
 .dm-input:focus-visible,
