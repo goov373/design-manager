@@ -6,13 +6,11 @@
  */
 
 import { useState } from 'react';
-import { Eye, EyeOff, ImageIcon, Wand2 } from 'lucide-react';
+import { Eye, EyeOff, Wand2 } from 'lucide-react';
 import { useDesignManagerContext } from '../context/DesignManagerContext';
 import { COLOR_TOKEN_GROUPS, getCSSVarName } from '../lib/constants';
 import { ColorPicker } from '../components/controls/ColorPicker';
-import { ContrastBadge } from '../components/controls/ContrastBadge';
 import { ExpandableSection } from '../components/controls/ExpandableSection';
-import { PhotoExtractor } from '../components/features/PhotoExtractor';
 import { simulateColorBlindness, CVD_TYPES } from '../lib/color-blindness';
 import { parseToOklch } from '../lib/color-utils';
 
@@ -67,7 +65,6 @@ function generateDarkModeColor(color, tokenName) {
 export function ColorsTab() {
   const { colors, darkMode, setColor } = useDesignManagerContext();
   const [cvdMode, setCvdMode] = useState(null);
-  const [showPhotoExtractor, setShowPhotoExtractor] = useState(false);
   const currentColors = darkMode ? colors.dark : colors.light;
   const backgroundColor = currentColors.background;
 
@@ -133,20 +130,6 @@ export function ColorsTab() {
           </div>
         </div>
       </div>
-
-      {/* Photo Color Extraction */}
-      {showPhotoExtractor ? (
-        <PhotoExtractor onClose={() => setShowPhotoExtractor(false)} />
-      ) : (
-        <button
-          type="button"
-          className="dm-button dm-button-secondary dm-photo-extract-btn"
-          onClick={() => setShowPhotoExtractor(true)}
-        >
-          <ImageIcon size={14} />
-          Extract colors from photo
-        </button>
-      )}
 
       <div className="dm-token-groups">
         {COLOR_TOKEN_GROUPS.map((group) => (

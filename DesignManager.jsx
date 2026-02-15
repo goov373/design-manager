@@ -5,11 +5,12 @@
  */
 
 import { useState, useEffect, useCallback, useRef, Component } from 'react';
-import { Palette, Type, Layers, Sparkles, Download, AlertTriangle, RefreshCw } from 'lucide-react';
+import { Hammer, Palette, Type, Layers, Sparkles, Download, AlertTriangle, RefreshCw } from 'lucide-react';
 import { DesignManagerProvider, useDesignManagerContext } from './context/DesignManagerContext';
 import { usePanelState } from './hooks/usePanelState';
 import { FloatingPanel } from './components/floating-panel/FloatingPanel';
 import { PanelHeader } from './components/floating-panel/PanelHeader';
+import { ToolsTab } from './tabs/ToolsTab';
 import { ColorsTab } from './tabs/ColorsTab';
 import { TypographyTab } from './tabs/TypographyTab';
 import { SurfacesTab } from './tabs/SurfacesTab';
@@ -67,6 +68,7 @@ class PanelErrorBoundary extends Component {
 import './styles/design-manager.css';
 
 const TAB_CONFIG = [
+  { id: TABS.TOOLS, label: 'Tools', icon: Hammer },
   { id: TABS.COLORS, label: 'Colors', icon: Palette },
   { id: TABS.TYPOGRAPHY, label: 'Type', icon: Type },
   { id: TABS.SURFACES, label: 'Surfaces', icon: Layers },
@@ -135,6 +137,8 @@ function DesignManagerPanel({ apiKey, apiEndpoint, onClose, panelState }) {
 
   const renderTabContent = () => {
     switch (activeTab) {
+      case TABS.TOOLS:
+        return <ToolsTab />;
       case TABS.COLORS:
         return <ColorsTab />;
       case TABS.TYPOGRAPHY:
