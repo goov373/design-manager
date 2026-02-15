@@ -1,0 +1,62 @@
+{
+  "name": "@gavin/design-manager",
+  "version": "1.0.0",
+  "description": "Standalone design/theme management tool for React applications",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./styles": "./styles/design-manager.css"
+  },
+  "files": [
+    "dist",
+    "styles",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "build:watch": "vite build --watch"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0",
+    "lucide-react": ">=0.300.0"
+  },
+  "dependencies": {
+    "react-rnd": "^10.4.0",
+    "culori": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "vite": "^7.0.0"
+  },
+  "keywords": [
+    "react",
+    "theme",
+    "design-system",
+    "color",
+    "typography",
+    "tailwind",
+    "shadcn",
+    "design-tokens",
+    "color-picker",
+    "dark-mode"
+  ],
+  "author": "Gavin",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/goov373/design-manager"
+  },
+  "bugs": {
+    "url": "https://github.com/goov373/design-manager/issues"
+  },
+  "homepage": "https://github.com/goov373/design-manager#readme"
+}
