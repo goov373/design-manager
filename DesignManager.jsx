@@ -243,7 +243,7 @@ export function DesignManager({
   position = 'center',  // Default to center for predictable UX
   defaultOpen = false,  // Default to false so trigger shows first
   apiKey,
-  apiEndpoint = '/api/design-manager/chat',
+  apiEndpoint,  // Custom endpoint (optional) - only set if you have a backend route
 }) {
   const panelState = usePanelState({
     storageKey: panelStorageKey,
