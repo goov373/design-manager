@@ -6,9 +6,10 @@
  */
 
 import { useState } from 'react';
-import { Hammer, Sparkles, Type, ImageIcon } from 'lucide-react';
+import { Hammer, Sparkles, Type, ImageIcon, Contrast } from 'lucide-react';
 import { PhotoExtractor } from '../components/features/PhotoExtractor';
 import { FontPairing } from '../components/tools/FontPairing';
+import { ContrastFixer } from '../components/tools/ContrastFixer';
 
 export function ToolsTab() {
   const [activeTool, setActiveTool] = useState(null);
@@ -51,6 +52,35 @@ export function ToolsTab() {
               type="button"
               className="dm-button dm-button-primary dm-tool-launch"
               onClick={() => setActiveTool('fontPairing')}
+            >
+              Launch Tool
+            </button>
+          )}
+        </div>
+
+        {/* Contrast Fixer */}
+        <div className="dm-tool-card">
+          <div className="dm-tool-header">
+            <div className="dm-tool-icon dm-tool-icon-contrast">
+              <Contrast size={20} />
+            </div>
+            <div className="dm-tool-info">
+              <h4 className="dm-tool-title">Contrast Fixer</h4>
+              <p className="dm-tool-description">
+                Fix failing color pairs with minimal adjustment. Preserves your brand colors while meeting WCAG requirements.
+              </p>
+            </div>
+          </div>
+
+          {activeTool === 'contrast' ? (
+            <div className="dm-tool-content">
+              <ContrastFixer onClose={closeTool} />
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="dm-button dm-button-primary dm-tool-launch"
+              onClick={() => setActiveTool('contrast')}
             >
               Launch Tool
             </button>
