@@ -2285,6 +2285,10 @@
   background: linear-gradient(135deg, oklch(0.6 0.18 340) 0%, oklch(0.5 0.2 10) 100%);
 }
 
+.dm-tool-icon-accessible {
+  background: linear-gradient(135deg, oklch(0.55 0.18 145) 0%, oklch(0.45 0.2 120) 100%);
+}
+
 .dm-tool-icon-muted {
   background: var(--dm-active);
   color: var(--dm-text-muted);
@@ -2999,6 +3003,251 @@
 .dm-preview-actions {
   display: flex;
   justify-content: flex-end;
+}
+
+/* ========================================
+   Accessible Palette Generator
+   ======================================== */
+
+.dm-accessible-generator {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dm-accessible-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.dm-accessible-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dm-accessible-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--dm-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.dm-accessible-color-input {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.dm-accessible-swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid var(--dm-border);
+  flex-shrink: 0;
+}
+
+.dm-accessible-color-input .dm-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.dm-accessible-level-select {
+  display: flex;
+  gap: 8px;
+}
+
+.dm-accessible-level {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px;
+  background: var(--dm-hover);
+  border: 2px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dm-accessible-level:hover {
+  border-color: var(--dm-border);
+}
+
+.dm-accessible-level.dm-active {
+  background: var(--dm-active);
+  border-color: var(--dm-primary);
+}
+
+.dm-level-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--dm-text);
+}
+
+.dm-level-ratio {
+  font-size: 10px;
+  color: var(--dm-text-muted);
+}
+
+.dm-accessible-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.dm-accessible-status.dm-all-pass {
+  background: oklch(0.95 0.08 145);
+  color: oklch(0.35 0.12 145);
+}
+
+.dm-accessible-status.dm-some-fail {
+  background: oklch(0.95 0.08 60);
+  color: oklch(0.45 0.12 60);
+}
+
+.dark .dm-accessible-status.dm-all-pass {
+  background: oklch(0.25 0.08 145);
+  color: oklch(0.8 0.1 145);
+}
+
+.dark .dm-accessible-status.dm-some-fail {
+  background: oklch(0.25 0.08 60);
+  color: oklch(0.8 0.1 60);
+}
+
+.dm-accessible-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: var(--dm-bg);
+  border: 1px solid var(--dm-border);
+  border-radius: 8px;
+}
+
+.dm-accessible-preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dm-accessible-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dm-accessible-swatch-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.dm-accessible-swatch-color {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  border: 1px solid var(--dm-border);
+}
+
+.dm-accessible-swatch-name {
+  font-size: 8px;
+  color: var(--dm-text-muted);
+  text-align: center;
+  max-width: 48px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dm-accessible-results {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--dm-border);
+}
+
+.dm-accessible-checks {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dm-accessible-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+.dm-accessible-check.dm-pass {
+  background: oklch(0.97 0.03 145);
+}
+
+.dm-accessible-check.dm-fail {
+  background: oklch(0.97 0.03 25);
+}
+
+.dark .dm-accessible-check.dm-pass {
+  background: oklch(0.2 0.03 145);
+}
+
+.dark .dm-accessible-check.dm-fail {
+  background: oklch(0.2 0.03 25);
+}
+
+.dm-check-name {
+  flex: 1;
+  color: var(--dm-text-muted);
+}
+
+.dm-check-ratio {
+  font-weight: 600;
+  color: var(--dm-text);
+}
+
+.dm-check-icon {
+  flex-shrink: 0;
+}
+
+.dm-accessible-check.dm-pass .dm-check-icon {
+  color: oklch(0.5 0.15 145);
+}
+
+.dm-accessible-check.dm-fail .dm-check-icon {
+  color: oklch(0.5 0.2 25);
+}
+
+.dm-accessible-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.dm-accessible-applied {
+  padding: 10px 12px;
+  background: oklch(0.95 0.08 145);
+  border-radius: 6px;
+  font-size: 12px;
+  color: oklch(0.35 0.12 145);
+  text-align: center;
+}
+
+.dark .dm-accessible-applied {
+  background: oklch(0.25 0.08 145);
+  color: oklch(0.8 0.1 145);
 }
 
 /* ========================================
