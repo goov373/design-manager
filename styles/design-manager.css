@@ -2289,6 +2289,10 @@
   background: linear-gradient(135deg, oklch(0.55 0.18 145) 0%, oklch(0.45 0.2 120) 100%);
 }
 
+.dm-tool-icon-darkmode {
+  background: linear-gradient(135deg, oklch(0.25 0.02 260) 0%, oklch(0.35 0.04 280) 100%);
+}
+
 .dm-tool-icon-muted {
   background: var(--dm-active);
   color: var(--dm-text-muted);
@@ -3246,6 +3250,179 @@
 }
 
 .dark .dm-accessible-applied {
+  background: oklch(0.25 0.08 145);
+  color: oklch(0.8 0.1 145);
+}
+
+/* ========================================
+   Dark Mode Generator
+   ======================================== */
+
+.dm-darkmode-generator {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dm-darkmode-direction {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px;
+  background: var(--dm-hover);
+  border-radius: 8px;
+}
+
+.dm-darkmode-dir-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--dm-text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dm-darkmode-dir-btn:hover {
+  color: var(--dm-text);
+}
+
+.dm-darkmode-dir-btn.dm-active {
+  background: var(--dm-bg);
+  color: var(--dm-text);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.08);
+}
+
+.dm-darkmode-swap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--dm-text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dm-darkmode-swap:hover {
+  background: var(--dm-bg);
+  color: var(--dm-text);
+}
+
+.dm-darkmode-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  background: var(--dm-bg);
+  border: 1px solid var(--dm-border);
+  border-radius: 8px;
+}
+
+.dm-darkmode-control {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dm-darkmode-control-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--dm-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.dm-darkmode-control-value {
+  font-weight: 400;
+  text-transform: none;
+  color: var(--dm-text);
+}
+
+.dm-darkmode-previews {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.dm-darkmode-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dm-darkmode-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--dm-text-muted);
+  text-transform: uppercase;
+}
+
+.dm-darkmode-preview-box {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--dm-border);
+}
+
+.dm-darkmode-preview-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid;
+  font-size: 10px;
+}
+
+.dm-darkmode-preview-card span:first-child {
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.dm-darkmode-preview-buttons {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.dm-darkmode-btn {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 500;
+}
+
+.dm-darkmode-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.dm-darkmode-success {
+  padding: 10px 12px;
+  background: oklch(0.95 0.08 145);
+  border-radius: 6px;
+  font-size: 12px;
+  color: oklch(0.35 0.12 145);
+  text-align: center;
+}
+
+.dark .dm-darkmode-success {
   background: oklch(0.25 0.08 145);
   color: oklch(0.8 0.1 145);
 }

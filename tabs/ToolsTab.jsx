@@ -6,13 +6,14 @@
  */
 
 import { useState } from 'react';
-import { Hammer, Sparkles, Type, ImageIcon, Contrast, Ruler, Eye, Palette } from 'lucide-react';
+import { Hammer, Sparkles, Type, ImageIcon, Contrast, Ruler, Eye, Palette, Moon } from 'lucide-react';
 import { PhotoExtractor } from '../components/features/PhotoExtractor';
 import { FontPairing } from '../components/tools/FontPairing';
 import { ContrastFixer } from '../components/tools/ContrastFixer';
 import { TokenScaleGenerator } from '../components/tools/TokenScaleGenerator';
 import { LivePreview } from '../components/tools/LivePreview';
 import { AccessiblePaletteGenerator } from '../components/tools/AccessiblePaletteGenerator';
+import { DarkModeGenerator } from '../components/tools/DarkModeGenerator';
 
 export function ToolsTab() {
   const [activeTool, setActiveTool] = useState(null);
@@ -142,6 +143,35 @@ export function ToolsTab() {
               type="button"
               className="dm-button dm-button-primary dm-tool-launch"
               onClick={() => setActiveTool('preview')}
+            >
+              Launch Tool
+            </button>
+          )}
+        </div>
+
+        {/* Enhanced Dark Mode Generator */}
+        <div className="dm-tool-card">
+          <div className="dm-tool-header">
+            <div className="dm-tool-icon dm-tool-icon-darkmode">
+              <Moon size={20} />
+            </div>
+            <div className="dm-tool-info">
+              <h4 className="dm-tool-title">Dark Mode Generator</h4>
+              <p className="dm-tool-description">
+                Generate dark mode palettes with live preview and fine-tuning controls. Works both ways—light to dark or dark to light.
+              </p>
+            </div>
+          </div>
+
+          {activeTool === 'darkmode' ? (
+            <div className="dm-tool-content">
+              <DarkModeGenerator onClose={closeTool} />
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="dm-button dm-button-primary dm-tool-launch"
+              onClick={() => setActiveTool('darkmode')}
             >
               Launch Tool
             </button>
