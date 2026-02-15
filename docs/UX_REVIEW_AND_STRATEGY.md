@@ -152,6 +152,46 @@ The tool is useful when you **don't know what you want** and need to explore. It
 
 ---
 
+## AI-Native Feature Roadmap
+
+The 2026 reality above identified a key challenge: AI coding assistants can edit CSS directly. Rather than competing with Claude, Design Manager now **works with it** through AI-native features that reduce iteration cycles.
+
+### Phase 1: AI Integration Primitives (COMPLETE)
+
+| Feature | What It Does |
+|---------|--------------|
+| **AI Rules Export** | Generates `.cursorrules` / `CLAUDE.md` files with design system constraints |
+| **Copy for AI Buttons** | One-click copy of theme context formatted for AI prompts |
+| **Semantic Token Metadata** | Tokens include intent descriptions AI can understand |
+
+These features mean: instead of "change primary to blue" → Claude edits CSS → looks wrong → iterate... you get: "here are my design tokens and constraints" → Claude makes informed changes → fewer iterations.
+
+### Phase 2: Developer Workflow (Current Priority)
+
+| Feature | Purpose |
+|---------|---------|
+| **Component Snippets Library** | Pre-built code patterns using your theme tokens |
+| **MCP Server** | Claude/Cursor can query your design system directly |
+| **Code Validator Tool** | Checks if generated code follows your design rules |
+
+### Phase 3: Ecosystem Integration (Future)
+
+| Feature | Purpose |
+|---------|---------|
+| **VS Code Extension** | Theme editing without leaving your editor |
+| **Figma Sync** | Bi-directional sync between Figma and code tokens |
+
+### The New Value Proposition
+
+Design Manager is no longer "a UI for editing CSS variables." It's a **context layer** that makes AI coding assistants produce better results on the first try.
+
+```
+Before: "Make the button blue" → wrong shade → iterate 3x
+After:  "Make the button blue (here's my design system)" → correct shade → done
+```
+
+---
+
 ## Monetization Options
 
 ### Option A: Keep It Internal (Recommended)

@@ -6,7 +6,7 @@
  */
 
 import { useState, useMemo } from 'react';
-import { Check, AlertTriangle, ArrowRight } from 'lucide-react';
+import { Check, AlertTriangle, ArrowRight, Bot } from 'lucide-react';
 import { useDesignManagerContext } from '../../context/DesignManagerContext';
 import { parseToOklch, toHexString } from '../../lib/color-utils';
 import {
@@ -14,6 +14,7 @@ import {
   checkContrast,
   WCAG_THRESHOLDS,
 } from '../../lib/contrast-checker';
+import { formatContrastFix, copyToClipboard } from '../../lib/ai-copy-utils';
 
 /**
  * Find the minimum lightness adjustment to meet target contrast
@@ -94,6 +95,7 @@ export function ContrastFixer({ onClose }) {
   const [background, setBackground] = useState(currentColors.background || '#ffffff');
   const [targetLevel, setTargetLevel] = useState('AA');
   const [adjustWhich, setAdjustWhich] = useState('foreground');
+  const [copiedForAI, setCopiedForAI] = useState(false);
 
   const targetRatio = targetLevel === 'AAA'
     ? WCAG_THRESHOLDS.AAA_NORMAL
@@ -141,6 +143,24 @@ export function ContrastFixer({ onClose }) {
         }
         setBackground(analysis.fix.color);
       }
+    }
+  };
+
+  const handleCopyForAI = async () => {
+    if (!analysis.fix || analysis.fix.alreadyPasses) return;
+
+    const aiText = formatContrastFix({
+      original: adjustWhich === 'foreground' ? foreground : background,
+      fixed: analysis.fix.color,
+      background: adjustWhich === 'foreground' ? background : foreground,
+      ratio: analysis.fixedContrast?.ratio.toFixed(2),
+      level: targetLevel,
+    });
+
+    const success = await copyToClipboard(aiText);
+    if (success) {
+      setCopiedForAI(true);
+      setTimeout(() => setCopiedForAI(false), 2000);
     }
   };
 
@@ -303,6 +323,17 @@ export function ContrastFixer({ onClose }) {
         >
           Cancel
         </button>
+        {!passes && analysis.fix && (
+          <button
+            type="button"
+            className="dm-button dm-button-ghost"
+            onClick={handleCopyForAI}
+            title="Copy fix details for AI tools"
+          >
+            <Bot size={14} />
+            {copiedForAI ? 'Copied!' : 'Copy for AI'}
+          </button>
+        )}
         <button
           type="button"
           className="dm-button dm-button-primary"

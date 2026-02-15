@@ -6,7 +6,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Check, Type } from 'lucide-react';
+import { Check, Type, Bot } from 'lucide-react';
 import { useDesignManagerContext } from '../../context/DesignManagerContext';
 import {
   FONT_CATALOG,
@@ -14,6 +14,7 @@ import {
   getFontsByCategory,
   getBodyPairings,
 } from '../../lib/typography-config';
+import { formatFontPairing, copyToClipboard } from '../../lib/ai-copy-utils';
 
 // Google Fonts loader
 function loadGoogleFont(fontId) {
@@ -43,6 +44,7 @@ export function FontPairing({ onClose }) {
   const [selectedHeading, setSelectedHeading] = useState(theme?.fontHeading || 'playfair-display');
   const [selectedBody, setSelectedBody] = useState(null);
   const [appliedPairing, setAppliedPairing] = useState(null);
+  const [copiedForAI, setCopiedForAI] = useState(false);
 
   const fontsByCategory = getFontsByCategory();
   const bodyPairings = getBodyPairings(selectedHeading);
@@ -64,6 +66,28 @@ export function FontPairing({ onClose }) {
       setToken('fontHeading', selectedHeading);
       setToken('fontBody', selectedBody);
       setAppliedPairing({ heading: selectedHeading, body: selectedBody });
+    }
+  };
+
+  const handleCopyForAI = async () => {
+    if (!selectedBody) return;
+
+    const headingFontData = FONT_CATALOG[selectedHeading];
+    const bodyFontData = FONT_CATALOG[selectedBody];
+    const pairingInfo = bodyPairings.find((p) => p.id === selectedBody);
+
+    const aiText = formatFontPairing({
+      heading: headingFontData?.name || selectedHeading,
+      body: bodyFontData?.name || selectedBody,
+      reasoning: pairingInfo?.reasoning || '',
+      headingWeight: theme?.fontWeightHeading || 600,
+      bodyWeight: theme?.fontWeightBody || 400,
+    });
+
+    const success = await copyToClipboard(aiText);
+    if (success) {
+      setCopiedForAI(true);
+      setTimeout(() => setCopiedForAI(false), 2000);
     }
   };
 
@@ -175,6 +199,17 @@ export function FontPairing({ onClose }) {
         >
           Cancel
         </button>
+        {selectedBody && (
+          <button
+            type="button"
+            className="dm-button dm-button-ghost"
+            onClick={handleCopyForAI}
+            title="Copy pairing details for AI tools"
+          >
+            <Bot size={14} />
+            {copiedForAI ? 'Copied!' : 'Copy for AI'}
+          </button>
+        )}
         <button
           type="button"
           className="dm-button dm-button-primary"

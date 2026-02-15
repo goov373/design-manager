@@ -5,7 +5,7 @@
  */
 
 import { useState, useRef } from 'react';
-import { Copy, Download, Upload, Check, AlertCircle } from 'lucide-react';
+import { Copy, Download, Upload, Check, AlertCircle, Bot } from 'lucide-react';
 import { useDesignManager } from '../hooks/useDesignManager';
 import { BUILT_IN_PRESETS } from '../lib/presets';
 
@@ -14,6 +14,19 @@ const EXPORT_FORMATS = [
   { id: 'json', name: 'JSON', extension: '.json' },
   { id: 'tailwind', name: 'Tailwind', extension: '.js' },
   { id: 'tokens', name: 'Design Tokens', extension: '.tokens.json' },
+  { id: 'rules', name: 'AI Rules', extension: '.md', icon: Bot },
+];
+
+const AI_RULES_FORMATS = [
+  { id: 'markdown', name: 'Markdown', description: 'For Claude/ChatGPT chat' },
+  { id: 'cursor', name: 'Cursor Rules', description: '.mdc format for .cursor/rules/' },
+  { id: 'claude', name: 'Claude Instructions', description: 'XML-structured format' },
+];
+
+const AI_RULES_SCOPES = [
+  { id: 'full', name: 'Full System', description: 'Colors, typography, spacing, patterns' },
+  { id: 'colors', name: 'Colors Only', description: 'Color tokens and accessibility' },
+  { id: 'typography', name: 'Typography Only', description: 'Fonts, sizes, line heights' },
 ];
 
 export function ExportTab() {
@@ -24,7 +37,16 @@ export function ExportTab() {
   const [importSuccess, setImportSuccess] = useState(false);
   const fileInputRef = useRef(null);
 
-  const exportedCode = exportTheme(activeFormat);
+  // AI Rules sub-options
+  const [rulesFormat, setRulesFormat] = useState('markdown');
+  const [rulesScope, setRulesScope] = useState('full');
+
+  // Build export options for rules format
+  const exportOptions = activeFormat === 'rules'
+    ? { format: rulesFormat, scope: rulesScope }
+    : {};
+
+  const exportedCode = exportTheme(activeFormat, exportOptions);
 
   const handleCopy = async () => {
     try {
@@ -42,7 +64,24 @@ export function ExportTab() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `theme${format.extension}`;
+
+    // Handle AI Rules file extensions based on sub-format
+    let extension = format.extension;
+    let filename = 'theme';
+    if (activeFormat === 'rules') {
+      if (rulesFormat === 'cursor') {
+        extension = '.mdc';
+        filename = 'design-system';
+      } else if (rulesFormat === 'claude') {
+        extension = '.md';
+        filename = 'claude-instructions';
+      } else {
+        extension = '.md';
+        filename = 'design-system-rules';
+      }
+    }
+
+    a.download = `${filename}${extension}`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -146,10 +185,54 @@ export function ExportTab() {
               className={`dm-format-tab ${activeFormat === format.id ? 'dm-active' : ''}`}
               onClick={() => setActiveFormat(format.id)}
             >
+              {format.icon && <format.icon size={14} />}
               {format.name}
             </button>
           ))}
         </div>
+
+        {/* AI Rules Sub-options */}
+        {activeFormat === 'rules' && (
+          <div className="dm-rules-options">
+            <div className="dm-rules-option-group">
+              <label className="dm-rules-label">Format</label>
+              <div className="dm-rules-select-group">
+                {AI_RULES_FORMATS.map((fmt) => (
+                  <button
+                    key={fmt.id}
+                    type="button"
+                    className={`dm-rules-option ${rulesFormat === fmt.id ? 'dm-active' : ''}`}
+                    onClick={() => setRulesFormat(fmt.id)}
+                    title={fmt.description}
+                  >
+                    {fmt.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="dm-rules-option-group">
+              <label className="dm-rules-label">Scope</label>
+              <div className="dm-rules-select-group">
+                {AI_RULES_SCOPES.map((scope) => (
+                  <button
+                    key={scope.id}
+                    type="button"
+                    className={`dm-rules-option ${rulesScope === scope.id ? 'dm-active' : ''}`}
+                    onClick={() => setRulesScope(scope.id)}
+                    title={scope.description}
+                  >
+                    {scope.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <p className="dm-rules-hint">
+              {rulesFormat === 'cursor' && 'Place in .cursor/rules/ for automatic context'}
+              {rulesFormat === 'claude' && 'Add to Claude project instructions'}
+              {rulesFormat === 'markdown' && 'Paste into any AI chat for design context'}
+            </p>
+          </div>
+        )}
 
         <div className="dm-code-preview">
           <pre className="dm-code-block">

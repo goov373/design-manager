@@ -13,10 +13,15 @@ A standalone, extractable design/theme management tool for React applications. F
 - **Typography Controls**: Font selection, weights, type scale, line height
 - **Surface Controls**: Paper colors, border radius, texture
 - **AI Theme Generation**: Chat-based theme generation (requires API key)
-- **Multi-Format Export**: CSS, JSON, Tailwind, Design Tokens
+- **Multi-Format Export**: CSS, JSON, Tailwind, W3C Design Tokens, AI Rules
 - **Undo/Redo**: Full history with keyboard shortcuts (Cmd+Z)
 - **Dark Mode**: Built-in dark mode toggle with auto-generation
 - **Accessible**: ARIA labels, keyboard navigation, reduced motion support
+
+### AI Integration (Phase 1)
+- **AI Rules Export**: Export your design system as AI-readable rules for Claude, Cursor, and ChatGPT
+- **"Copy for AI" Buttons**: One-click copy of tool outputs formatted for AI consumption
+- **Semantic Token Metadata**: Each color token includes usage descriptions and AI hints for context-aware code generation
 
 ### Panel UX (v1.1.0)
 - **Centered Opening**: Panel always opens centered in viewport for predictable UX
@@ -172,39 +177,103 @@ function CustomPanel() {
 }
 ```
 
+## Design Tools
+
+The Tools tab provides 8 AI-powered design utilities:
+
+| Tool | Description |
+|------|-------------|
+| **AI Theme Generator** | Describe your ideal theme in plain language and generate complete light/dark palettes |
+| **Smart Font Pairing** | Select a heading font and get AI-recommended body font pairings with live preview |
+| **Accessible Palette** | Generate complete color palettes that meet WCAG requirements from the start |
+| **Contrast Fixer** | Fix failing color pairs with minimal adjustment while preserving brand colors |
+| **Live Preview Tester** | See your colors on a realistic UI mockup with side-by-side light/dark mode and CVD simulation |
+| **Dark Mode Generator** | Generate dark mode palettes with live preview and fine-tuning controls (works both ways) |
+| **Design Token Scales** | Generate harmonious spacing, border-radius, and shadow scales using mathematical ratios |
+| **Photo Color Extractor** | Upload an image and automatically extract a harmonious color palette |
+
+## Export Formats
+
+Export your design system in 5 formats:
+
+| Format | Extension | Use Case |
+|--------|-----------|----------|
+| **CSS Variables** | `.css` | Direct use in any CSS project with `:root` variables |
+| **JSON** | `.json` | Import/export themes, use with build tools or APIs |
+| **Tailwind Config** | `.js` | Drop into `tailwind.config.js` for full Tailwind integration |
+| **W3C Design Tokens** | `.tokens.json` | Standard format for design tool interoperability (Figma, Tokens Studio) |
+| **AI Rules** | `.md` / `.mdc` | Machine-readable rules for Claude, Cursor, and ChatGPT |
+
+### AI Rules Export Options
+
+The AI Rules format includes sub-options for different AI tools:
+
+- **Markdown**: General format for Claude/ChatGPT chat - paste directly into conversations
+- **Cursor Rules**: `.mdc` format for `.cursor/rules/` - provides automatic context in Cursor IDE
+- **Claude Instructions**: XML-structured format optimized for Claude project instructions
+
+Each format can be scoped to Full System, Colors Only, or Typography Only.
+
 ## File Structure
 
 ```
 design-manager/
-├── DesignManager.jsx           # Main component entry point
-├── index.js                    # Package exports
+├── DesignManager.jsx              # Main component entry point
+├── index.js                       # Package exports
+├── package.json
 ├── components/
+│   ├── ai/
+│   │   └── AIChat.jsx             # AI chat interface
+│   ├── controls/
+│   │   ├── ColorPicker.jsx        # OKLCH color picker
+│   │   ├── ContrastBadge.jsx      # WCAG compliance indicator
+│   │   ├── ExpandableSection.jsx  # Collapsible section component
+│   │   ├── FontSelector.jsx       # Font family selector
+│   │   └── FontWeightSelector.jsx # Font weight selector
+│   ├── features/
+│   │   ├── ColorBlindnessSimulator.jsx # CVD simulation filters
+│   │   └── PhotoExtractor.jsx     # Image color extraction
 │   ├── floating-panel/
-│   │   ├── FloatingPanel.jsx   # Draggable/resizable container
-│   │   └── PanelHeader.jsx     # Header with controls
-│   ├── colors/
-│   │   ├── ColorPicker.jsx     # OKLCH color picker
-│   │   ├── ContrastBadge.jsx   # WCAG compliance indicator
-│   │   └── ...
-│   └── ai/
-│       └── AIChat.jsx          # AI chat interface
-├── tabs/
-│   ├── ColorsTab.jsx           # Color token management
-│   ├── TypographyTab.jsx       # Font controls
-│   ├── SurfacesTab.jsx         # Paper/texture controls
-│   ├── AITab.jsx               # AI theme generation
-│   └── ExportTab.jsx           # Export functionality
-├── hooks/
-│   ├── usePanelState.js        # Panel position/size/state
-│   └── useColorExtraction.js   # Photo color extraction
+│   │   ├── FloatingPanel.jsx      # Draggable/resizable container
+│   │   └── PanelHeader.jsx        # Header with controls
+│   └── tools/
+│       ├── AccessiblePaletteGenerator.jsx # WCAG-compliant palette generator
+│       ├── AIThemeGenerator.jsx   # AI-powered theme generation
+│       ├── ContrastFixer.jsx      # Fix failing color contrasts
+│       ├── DarkModeGenerator.jsx  # Light/dark mode conversion
+│       ├── FontPairing.jsx        # Font pairing suggestions
+│       ├── LivePreview.jsx        # Real-time UI mockup preview
+│       └── TokenScaleGenerator.jsx # Mathematical scale generator
 ├── context/
-│   └── DesignManagerContext.jsx # Theme state provider
+│   └── DesignManagerContext.jsx   # Theme state provider
+├── hooks/
+│   ├── useAIChat.js               # AI chat state management
+│   ├── useColorExtraction.js      # Photo color extraction
+│   ├── useDesignManager.js        # Main design manager hook
+│   └── usePanelState.js           # Panel position/size/state
 ├── lib/
-│   ├── constants.js            # Configuration constants
-│   ├── color-utils.js          # Color manipulation
-│   └── export-utils.js         # Export formatters
-└── styles/
-    └── design-manager.css      # All component styles
+│   ├── ai-copy-utils.js           # AI-friendly output formatters
+│   ├── color-blindness.js         # CVD simulation algorithms
+│   ├── color-utils.js             # Color manipulation (OKLCH)
+│   ├── constants.js               # Configuration & semantic token metadata
+│   ├── contrast-checker.js        # WCAG contrast calculations
+│   ├── exporters/
+│   │   ├── css-exporter.js        # CSS variables export
+│   │   ├── json-exporter.js       # JSON theme export
+│   │   ├── rules-exporter.js      # AI rules export (Claude, Cursor, ChatGPT)
+│   │   ├── tailwind-exporter.js   # Tailwind config export
+│   │   └── tokens-exporter.js     # W3C Design Tokens export
+│   ├── presets.js                 # Built-in theme presets
+│   ├── theme-utils.js             # Theme manipulation utilities
+│   └── typography-config.js       # Type scales and line heights
+├── styles/
+│   └── design-manager.css         # All component styles
+└── tabs/
+    ├── ColorsTab.jsx              # Color token management
+    ├── ExportTab.jsx              # Export & presets
+    ├── SurfacesTab.jsx            # Paper/texture controls
+    ├── ToolsTab.jsx               # Design tools hub
+    └── TypographyTab.jsx          # Font controls
 ```
 
 ## Theme Structure
@@ -351,6 +420,16 @@ And return:
 - Safari 15+
 
 ## Changelog
+
+### v1.2.0 (2026-02-15) - AI Integration Phase 1
+- **AI Rules Export**: New export format for Claude, Cursor, and ChatGPT
+  - Markdown format for chat-based AI tools
+  - Cursor Rules (.mdc) format for automatic IDE context
+  - Claude Instructions (XML) format for project instructions
+- **Semantic Token Metadata**: Color tokens now include usage descriptions and AI hints
+- **"Copy for AI" Utilities**: Tool outputs formatted for AI consumption
+- **8 Design Tools**: AI Theme Generator, Font Pairing, Accessible Palette, Contrast Fixer, Live Preview, Dark Mode Generator, Token Scales, Photo Extractor
+- **W3C Design Tokens Export**: Added tokens-exporter for standard interoperability
 
 ### v1.1.0 (2026-02-15)
 - Panel now opens centered in viewport

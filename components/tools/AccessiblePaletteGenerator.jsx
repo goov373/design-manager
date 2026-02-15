@@ -6,10 +6,11 @@
  */
 
 import { useState, useMemo } from 'react';
-import { Palette, Check, AlertTriangle, RefreshCw } from 'lucide-react';
+import { Palette, Check, AlertTriangle, RefreshCw, Bot } from 'lucide-react';
 import { useDesignManagerContext } from '../../context/DesignManagerContext';
 import { parseToOklch, toHexString } from '../../lib/color-utils';
 import { getContrastRatio, WCAG_THRESHOLDS } from '../../lib/contrast-checker';
+import { formatAccessiblePalette, copyToClipboard } from '../../lib/ai-copy-utils';
 
 /**
  * Generate an accessible palette from a brand color
@@ -152,6 +153,7 @@ export function AccessiblePaletteGenerator({ onClose }) {
   const [brandColor, setBrandColor] = useState(colors.light.primary || 'oklch(0.65 0.18 55)');
   const [targetLevel, setTargetLevel] = useState('AA');
   const [generated, setGenerated] = useState(null);
+  const [copiedForAI, setCopiedForAI] = useState(false);
 
   const targetRatio = targetLevel === 'AAA'
     ? WCAG_THRESHOLDS.AAA_NORMAL
@@ -183,6 +185,28 @@ export function AccessiblePaletteGenerator({ onClose }) {
     });
 
     setGenerated(palette);
+  };
+
+  const handleCopyForAI = async () => {
+    if (!palette) return;
+
+    // Build palette array for AI format
+    const paletteArray = Object.entries(palette).map(([name, value]) => ({
+      name,
+      value,
+    }));
+
+    const aiText = formatAccessiblePalette({
+      baseColor: brandColor,
+      palette: paletteArray,
+      mode: 'light',
+    });
+
+    const success = await copyToClipboard(aiText);
+    if (success) {
+      setCopiedForAI(true);
+      setTimeout(() => setCopiedForAI(false), 2000);
+    }
   };
 
   return (
@@ -306,6 +330,17 @@ export function AccessiblePaletteGenerator({ onClose }) {
         >
           Cancel
         </button>
+        {palette && (
+          <button
+            type="button"
+            className="dm-button dm-button-ghost"
+            onClick={handleCopyForAI}
+            title="Copy palette details for AI tools"
+          >
+            <Bot size={14} />
+            {copiedForAI ? 'Copied!' : 'Copy for AI'}
+          </button>
+        )}
         <button
           type="button"
           className="dm-button dm-button-primary"

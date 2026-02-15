@@ -1,3 +1,15 @@
+> **DEPRECATED** (February 2026)
+>
+> This document was a **planning document** used during the initial extraction of Design Manager
+> from the Papercraft codebase. The paths listed here reference the SOURCE project, not Design Manager itself.
+>
+> For current documentation, see:
+> - **[ARCHITECTURE.md](./ARCHITECTURE.md)** - Current package structure and design principles
+> - **[API_REFERENCE.md](./API_REFERENCE.md)** - Public API documentation
+> - **[README.md](../README.md)** - Usage and installation
+
+---
+
 # Source Code Extraction Map
 
 ## Files to Copy & Adapt

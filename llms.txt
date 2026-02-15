@@ -1,0 +1,90 @@
+# Design Manager
+
+> React design token management tool with floating panel UI, OKLCH colors, 7 design tools, and 5 export formats. Self-contained package for any React 18+ application.
+
+## Documentation
+
+- [README](README.md): Installation, usage, props, theme structure, keyboard shortcuts
+- [API Reference](docs/API_REFERENCE.md): Components, hooks, types, utility functions
+- [Architecture](docs/ARCHITECTURE.md): Package boundaries, folder structure, state shape
+- [Color System](docs/COLOR_SYSTEM.md): OKLCH format, contrast checking, CVD simulation
+- [Code Map](docs/EXISTING_CODE_MAP.md): File extraction and adaptation guide
+
+## Source Code
+
+### Entry Points
+- [index.js](index.js): Public exports for all components, hooks, and utilities
+- [DesignManager.jsx](DesignManager.jsx): Main floating panel component
+- [package.json](package.json): Dependencies and build configuration
+
+### Context & State
+- [DesignManagerContext.jsx](context/DesignManagerContext.jsx): Theme state provider with undo/redo
+
+### Hooks
+- [useDesignManager.js](hooks/useDesignManager.js): Public API hook for theme access
+- [usePanelState.js](hooks/usePanelState.js): Panel position, size, and persistence
+- [useColorExtraction.js](hooks/useColorExtraction.js): Extract colors from images
+- [useAIChat.js](hooks/useAIChat.js): AI-powered theme generation chat
+
+### Tabs
+- [ToolsTab.jsx](tabs/ToolsTab.jsx): Design tools launcher (7 tools)
+- [ColorsTab.jsx](tabs/ColorsTab.jsx): Color token editor
+- [TypographyTab.jsx](tabs/TypographyTab.jsx): Font family, weight, scale controls
+- [SurfacesTab.jsx](tabs/SurfacesTab.jsx): Paper colors, radius, texture
+- [ExportTab.jsx](tabs/ExportTab.jsx): Multi-format export (5 formats)
+
+### Components
+- [FloatingPanel.jsx](components/floating-panel/FloatingPanel.jsx): react-rnd wrapper for drag/resize
+- [PanelHeader.jsx](components/floating-panel/PanelHeader.jsx): Title bar with controls
+- [ColorPicker.jsx](components/controls/ColorPicker.jsx): OKLCH color input with swatch
+- [ContrastBadge.jsx](components/controls/ContrastBadge.jsx): WCAG compliance indicator
+- [FontSelector.jsx](components/controls/FontSelector.jsx): Font dropdown with preview
+- [PhotoExtractor.jsx](components/features/PhotoExtractor.jsx): Image upload and color extraction
+- [ColorBlindnessSimulator.jsx](components/features/ColorBlindnessSimulator.jsx): CVD simulation toggle
+
+### Design Tools
+- [AIThemeGenerator.jsx](components/tools/AIThemeGenerator.jsx): Chat-based theme generation
+- [FontPairing.jsx](components/tools/FontPairing.jsx): AI-recommended font combinations
+- [AccessiblePaletteGenerator.jsx](components/tools/AccessiblePaletteGenerator.jsx): WCAG-compliant palette creation
+- [ContrastFixer.jsx](components/tools/ContrastFixer.jsx): Fix contrast issues automatically
+- [TokenScaleGenerator.jsx](components/tools/TokenScaleGenerator.jsx): Generate token scales
+- [LivePreview.jsx](components/tools/LivePreview.jsx): Real-time theme preview
+- [DarkModeGenerator.jsx](components/tools/DarkModeGenerator.jsx): Generate dark mode from light
+
+### Library
+- [constants.js](lib/constants.js): Default theme, color tokens, token groups, metadata
+- [color-utils.js](lib/color-utils.js): OKLCH manipulation using culori
+- [contrast-checker.js](lib/contrast-checker.js): WCAG 2.1 contrast calculations
+- [color-blindness.js](lib/color-blindness.js): Brettel CVD simulation algorithm
+- [theme-utils.js](lib/theme-utils.js): CSS variable application, storage, fonts
+- [typography-config.js](lib/typography-config.js): Font catalog with 50+ Google Fonts
+- [presets.js](lib/presets.js): Built-in theme presets
+
+### Exporters
+- [css-exporter.js](lib/exporters/css-exporter.js): Export as CSS custom properties
+- [json-exporter.js](lib/exporters/json-exporter.js): Export as structured JSON
+- [tailwind-exporter.js](lib/exporters/tailwind-exporter.js): Export as Tailwind config
+- [tokens-exporter.js](lib/exporters/tokens-exporter.js): Export as W3C Design Tokens
+- [rules-exporter.js](lib/exporters/rules-exporter.js): Export as style rules
+
+### Styles
+- [design-manager.css](styles/design-manager.css): All component styles with dm- prefix
+
+## Color Tokens
+
+16 semantic tokens (shadcn/ui compatible):
+- Background: background, foreground
+- Cards: card, cardForeground, popover, popoverForeground
+- Interactive: primary, primaryForeground, secondary, secondaryForeground
+- Accents: accent, accentForeground, muted, mutedForeground
+- Forms: border, input, ring, destructive
+
+## Tools
+
+- AI Theme Generator: Natural language theme creation
+- Smart Font Pairing: AI-recommended heading/body combinations
+- Accessible Palette Generator: WCAG-compliant color palettes
+- Contrast Fixer: Automatic contrast issue resolution
+- Token Scale Generator: Mathematical token progressions
+- Live Preview: Real-time theme visualization
+- Dark Mode Generator: Automatic dark mode from light colors

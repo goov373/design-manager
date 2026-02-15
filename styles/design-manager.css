@@ -827,6 +827,73 @@
   border-color: var(--dm-primary);
 }
 
+.dm-format-tab svg {
+  margin-right: 4px;
+  vertical-align: -2px;
+}
+
+/* AI Rules Options */
+.dm-rules-options {
+  background: var(--dm-hover);
+  border: 1px solid var(--dm-border);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.dm-rules-option-group {
+  margin-bottom: 10px;
+}
+
+.dm-rules-option-group:last-of-type {
+  margin-bottom: 8px;
+}
+
+.dm-rules-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--dm-text-muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dm-rules-select-group {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.dm-rules-option {
+  padding: 5px 10px;
+  background: var(--dm-surface);
+  border: 1px solid var(--dm-border);
+  border-radius: 4px;
+  font-size: 11px;
+  color: var(--dm-text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dm-rules-option:hover {
+  border-color: var(--dm-border-hover);
+  color: var(--dm-text);
+}
+
+.dm-rules-option.dm-active {
+  background: var(--dm-primary);
+  border-color: var(--dm-primary);
+  color: white;
+}
+
+.dm-rules-hint {
+  font-size: 11px;
+  color: var(--dm-text-muted);
+  margin: 0;
+  font-style: italic;
+}
+
 .dm-code-preview {
   margin-bottom: 12px;
 }
@@ -871,6 +938,22 @@
 
 .dm-button-secondary:hover {
   background: var(--dm-active);
+}
+
+.dm-button-ghost {
+  background: transparent;
+  color: var(--dm-text-muted);
+  border: none;
+}
+
+.dm-button-ghost:hover {
+  background: var(--dm-hover);
+  color: var(--dm-text);
+}
+
+.dm-button-small {
+  padding: 4px 8px;
+  font-size: 11px;
 }
 
 .dm-import-zone {

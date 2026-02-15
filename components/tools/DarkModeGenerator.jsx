@@ -6,9 +6,10 @@
  */
 
 import { useState, useMemo } from 'react';
-import { Moon, Sun, RefreshCw, ArrowLeftRight } from 'lucide-react';
+import { Moon, Sun, RefreshCw, ArrowLeftRight, Bot } from 'lucide-react';
 import { useDesignManagerContext } from '../../context/DesignManagerContext';
 import { parseToOklch, toHexString } from '../../lib/color-utils';
+import { formatDarkModeColors, copyToClipboard } from '../../lib/ai-copy-utils';
 
 /**
  * Generate dark mode color with adjustable parameters
@@ -148,6 +149,7 @@ export function DarkModeGenerator({ onClose }) {
   const [saturationBoost, setSaturationBoost] = useState(1.1);
   const [direction, setDirection] = useState('lightToDark'); // or 'darkToLight'
   const [applied, setApplied] = useState(false);
+  const [copiedForAI, setCopiedForAI] = useState(false);
 
   // Generate preview
   const generatedColors = useMemo(() => {
@@ -178,6 +180,20 @@ export function DarkModeGenerator({ onClose }) {
 
   const handleSwapDirection = () => {
     setDirection(direction === 'lightToDark' ? 'darkToLight' : 'lightToDark');
+  };
+
+  const handleCopyForAI = async () => {
+    const aiText = formatDarkModeColors({
+      lightColors: direction === 'lightToDark' ? sourceColors : generatedColors,
+      darkColors: direction === 'lightToDark' ? generatedColors : sourceColors,
+      algorithm: `Perceptual adjustment (darkness: ${Math.round(darknessLevel * 100)}%, saturation: ${Math.round(saturationBoost * 100)}%)`,
+    });
+
+    const success = await copyToClipboard(aiText);
+    if (success) {
+      setCopiedForAI(true);
+      setTimeout(() => setCopiedForAI(false), 2000);
+    }
   };
 
   const sourceColors = direction === 'lightToDark' ? colors.light : colors.dark;
@@ -271,6 +287,15 @@ export function DarkModeGenerator({ onClose }) {
           onClick={onClose}
         >
           Cancel
+        </button>
+        <button
+          type="button"
+          className="dm-button dm-button-ghost"
+          onClick={handleCopyForAI}
+          title="Copy color mapping for AI tools"
+        >
+          <Bot size={14} />
+          {copiedForAI ? 'Copied!' : 'Copy for AI'}
         </button>
         <button
           type="button"
