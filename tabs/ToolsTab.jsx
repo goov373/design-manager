@@ -6,11 +6,12 @@
  */
 
 import { useState } from 'react';
-import { Hammer, Sparkles, Type, ImageIcon, Contrast, Ruler } from 'lucide-react';
+import { Hammer, Sparkles, Type, ImageIcon, Contrast, Ruler, Eye } from 'lucide-react';
 import { PhotoExtractor } from '../components/features/PhotoExtractor';
 import { FontPairing } from '../components/tools/FontPairing';
 import { ContrastFixer } from '../components/tools/ContrastFixer';
 import { TokenScaleGenerator } from '../components/tools/TokenScaleGenerator';
+import { LivePreview } from '../components/tools/LivePreview';
 
 export function ToolsTab() {
   const [activeTool, setActiveTool] = useState(null);
@@ -82,6 +83,35 @@ export function ToolsTab() {
               type="button"
               className="dm-button dm-button-primary dm-tool-launch"
               onClick={() => setActiveTool('contrast')}
+            >
+              Launch Tool
+            </button>
+          )}
+        </div>
+
+        {/* Live Preview Color Tester */}
+        <div className="dm-tool-card">
+          <div className="dm-tool-header">
+            <div className="dm-tool-icon dm-tool-icon-preview">
+              <Eye size={20} />
+            </div>
+            <div className="dm-tool-info">
+              <h4 className="dm-tool-title">Live Preview Tester</h4>
+              <p className="dm-tool-description">
+                See your colors on a realistic UI mockup. Side-by-side light/dark mode with CVD simulation.
+              </p>
+            </div>
+          </div>
+
+          {activeTool === 'preview' ? (
+            <div className="dm-tool-content">
+              <LivePreview onClose={closeTool} />
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="dm-button dm-button-primary dm-tool-launch"
+              onClick={() => setActiveTool('preview')}
             >
               Launch Tool
             </button>
