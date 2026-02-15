@@ -2277,6 +2277,10 @@
   background: linear-gradient(135deg, oklch(0.6 0.15 60) 0%, oklch(0.5 0.18 30) 100%);
 }
 
+.dm-tool-icon-scale {
+  background: linear-gradient(135deg, oklch(0.55 0.15 160) 0%, oklch(0.45 0.18 180) 100%);
+}
+
 .dm-tool-icon-muted {
   background: var(--dm-active);
   color: var(--dm-text-muted);
@@ -2642,6 +2646,145 @@
 .dm-fixer-actions {
   display: flex;
   gap: 8px;
+  justify-content: flex-end;
+}
+
+/* ========================================
+   Token Scale Generator
+   ======================================== */
+
+.dm-token-generator {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dm-token-config {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dm-token-config-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.dm-token-config-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dm-token-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--dm-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.dm-token-input-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dm-token-unit {
+  font-size: 12px;
+  color: var(--dm-text-muted);
+}
+
+.dm-token-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  background: var(--dm-bg);
+  border: 1px solid var(--dm-border);
+  border-radius: 8px;
+}
+
+.dm-token-section-title {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--dm-text);
+}
+
+.dm-token-scale-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dm-token-scale-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.dm-token-name {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--dm-text-muted);
+}
+
+.dm-token-value {
+  font-size: 9px;
+  color: var(--dm-text-muted);
+  opacity: 0.7;
+}
+
+.dm-spacing-box {
+  background: var(--dm-primary);
+  border-radius: 2px;
+  min-width: 4px;
+}
+
+.dm-radius-box {
+  width: 32px;
+  height: 32px;
+  background: var(--dm-primary);
+}
+
+.dm-shadow-box {
+  width: 40px;
+  height: 40px;
+  background: var(--dm-bg);
+  border-radius: 6px;
+}
+
+.dm-token-export {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dm-token-export-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dm-token-code {
+  margin: 0;
+  padding: 12px;
+  background: var(--dm-hover);
+  border: 1px solid var(--dm-border);
+  border-radius: 6px;
+  font-family: 'SF Mono', Monaco, monospace;
+  font-size: 10px;
+  line-height: 1.5;
+  overflow-x: auto;
+  max-height: 200px;
+  color: var(--dm-text);
+}
+
+.dm-token-actions {
+  display: flex;
   justify-content: flex-end;
 }
 

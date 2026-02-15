@@ -6,10 +6,11 @@
  */
 
 import { useState } from 'react';
-import { Hammer, Sparkles, Type, ImageIcon, Contrast } from 'lucide-react';
+import { Hammer, Sparkles, Type, ImageIcon, Contrast, Ruler } from 'lucide-react';
 import { PhotoExtractor } from '../components/features/PhotoExtractor';
 import { FontPairing } from '../components/tools/FontPairing';
 import { ContrastFixer } from '../components/tools/ContrastFixer';
+import { TokenScaleGenerator } from '../components/tools/TokenScaleGenerator';
 
 export function ToolsTab() {
   const [activeTool, setActiveTool] = useState(null);
@@ -87,6 +88,35 @@ export function ToolsTab() {
           )}
         </div>
 
+        {/* Design Token Scale Generator */}
+        <div className="dm-tool-card">
+          <div className="dm-tool-header">
+            <div className="dm-tool-icon dm-tool-icon-scale">
+              <Ruler size={20} />
+            </div>
+            <div className="dm-tool-info">
+              <h4 className="dm-tool-title">Design Token Scales</h4>
+              <p className="dm-tool-description">
+                Generate harmonious spacing, border-radius, and shadow scales using mathematical ratios.
+              </p>
+            </div>
+          </div>
+
+          {activeTool === 'scales' ? (
+            <div className="dm-tool-content">
+              <TokenScaleGenerator onClose={closeTool} />
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="dm-button dm-button-primary dm-tool-launch"
+              onClick={() => setActiveTool('scales')}
+            >
+              Launch Tool
+            </button>
+          )}
+        </div>
+
         {/* Photo Color Extractor */}
         <div className="dm-tool-card">
           <div className="dm-tool-header">
@@ -125,7 +155,7 @@ export function ToolsTab() {
             <div className="dm-tool-info">
               <h4 className="dm-tool-title">More Tools Coming Soon</h4>
               <p className="dm-tool-description">
-                Contrast fixer, accessible palette generator, design token scales, and more.
+                Accessible palette generator, live preview tester, and more AI-powered utilities.
               </p>
             </div>
           </div>
