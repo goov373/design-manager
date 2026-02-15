@@ -184,12 +184,16 @@ const DesignManagerContext = createContext(null);
  * @param {Object} props.initialTheme - Initial theme values
  * @param {Function} props.onChange - Callback on theme change
  * @param {string} props.storageKey - localStorage key
+ * @param {string} props.apiKey - OpenAI API key for AI features
+ * @param {string} props.apiEndpoint - Custom API endpoint for AI chat
  * @param {React.ReactNode} props.children - Child components
  */
 export function DesignManagerProvider({
   initialTheme,
   onChange,
   storageKey = DEFAULT_STORAGE_KEY,
+  apiKey,
+  apiEndpoint,
   children,
 }) {
   const [state, dispatch] = useReducer(
@@ -293,6 +297,10 @@ export function DesignManagerProvider({
     darkMode: state.darkMode,
     activeTab: state.activeTab,
     colors: state.colors,
+
+    // API configuration (for AI features)
+    apiKey,
+    apiEndpoint,
 
     // History state
     canUndo: state.historyIndex >= 0,

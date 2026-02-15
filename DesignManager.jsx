@@ -5,7 +5,7 @@
  */
 
 import { useState, useEffect, useCallback, useRef, Component } from 'react';
-import { Hammer, Palette, Type, Layers, Sparkles, Download, AlertTriangle, RefreshCw } from 'lucide-react';
+import { Hammer, Palette, Type, Layers, Download, AlertTriangle, RefreshCw } from 'lucide-react';
 import { DesignManagerProvider, useDesignManagerContext } from './context/DesignManagerContext';
 import { usePanelState } from './hooks/usePanelState';
 import { FloatingPanel } from './components/floating-panel/FloatingPanel';
@@ -14,7 +14,6 @@ import { ToolsTab } from './tabs/ToolsTab';
 import { ColorsTab } from './tabs/ColorsTab';
 import { TypographyTab } from './tabs/TypographyTab';
 import { SurfacesTab } from './tabs/SurfacesTab';
-import { AITab } from './tabs/AITab';
 import { ExportTab } from './tabs/ExportTab';
 import { TABS, DEFAULT_STORAGE_KEY, DEFAULT_PANEL_KEY } from './lib/constants';
 
@@ -72,14 +71,13 @@ const TAB_CONFIG = [
   { id: TABS.COLORS, label: 'Colors', icon: Palette },
   { id: TABS.TYPOGRAPHY, label: 'Type', icon: Type },
   { id: TABS.SURFACES, label: 'Surfaces', icon: Layers },
-  { id: TABS.AI, label: 'AI', icon: Sparkles },
   { id: TABS.EXPORT, label: 'Export', icon: Download },
 ];
 
 /**
  * Inner panel content (uses context)
  */
-function DesignManagerPanel({ apiKey, apiEndpoint, onClose, panelState }) {
+function DesignManagerPanel({ onClose, panelState }) {
   const {
     darkMode,
     activeTab,
@@ -145,8 +143,6 @@ function DesignManagerPanel({ apiKey, apiEndpoint, onClose, panelState }) {
         return <TypographyTab />;
       case TABS.SURFACES:
         return <SurfacesTab />;
-      case TABS.AI:
-        return <AITab apiKey={apiKey} apiEndpoint={apiEndpoint} />;
       case TABS.EXPORT:
         return <ExportTab />;
       default:
@@ -290,12 +286,12 @@ export function DesignManager({
       initialTheme={initialTheme}
       onChange={onChange}
       storageKey={storageKey}
+      apiKey={apiKey}
+      apiEndpoint={apiEndpoint}
     >
       {panelState.isOpen ? (
         <PanelErrorBoundary onClose={panelState.close}>
           <DesignManagerPanel
-            apiKey={apiKey}
-            apiEndpoint={apiEndpoint}
             onClose={panelState.close}
             panelState={panelState}
           />

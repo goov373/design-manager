@@ -2247,6 +2247,15 @@
   opacity: 0.6;
 }
 
+.dm-tool-featured {
+  border-color: oklch(0.65 0.15 300 / 0.3);
+  background: linear-gradient(135deg, oklch(0.98 0.01 300) 0%, var(--dm-panel) 50%);
+}
+
+.dm-tool-featured:hover {
+  border-color: oklch(0.65 0.2 300);
+}
+
 .dm-tool-header {
   display: flex;
   gap: 12px;
@@ -2293,6 +2302,10 @@
   background: linear-gradient(135deg, oklch(0.25 0.02 260) 0%, oklch(0.35 0.04 280) 100%);
 }
 
+.dm-tool-icon-ai {
+  background: linear-gradient(135deg, oklch(0.65 0.22 300) 0%, oklch(0.55 0.25 330) 100%);
+}
+
 .dm-tool-icon-muted {
   background: var(--dm-active);
   color: var(--dm-text-muted);
@@ -2326,6 +2339,86 @@
   margin-top: 12px;
   padding-top: 12px;
   border-top: 1px solid var(--dm-border);
+}
+
+/* ========================================
+   AI Theme Generator Tool
+   ======================================== */
+
+.dm-ai-tool {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dm-ai-tool-header {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.dm-ai-quick-prompts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.dm-ai-quick-chip {
+  padding: 6px 10px;
+  font-size: 11px;
+  background: var(--dm-active);
+  border: 1px solid var(--dm-border);
+  border-radius: 12px;
+  color: var(--dm-text);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dm-ai-quick-chip:hover {
+  background: var(--dm-primary);
+  color: var(--dm-primary-foreground);
+  border-color: var(--dm-primary);
+}
+
+.dm-ai-tool-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 8px;
+  border-top: 1px solid var(--dm-border);
+}
+
+.dm-ai-setup-compact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  background: var(--dm-active);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.dm-ai-setup-compact .dm-ai-setup-icon {
+  color: var(--dm-text-muted);
+}
+
+.dm-ai-setup-compact h4 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--dm-text);
+}
+
+.dm-ai-setup-compact p {
+  margin: 0;
+  font-size: 11px;
+  color: var(--dm-text-muted);
+  line-height: 1.4;
+}
+
+.dm-code-small {
+  font-size: 10px;
+  padding: 8px;
+  margin: 0;
 }
 
 /* ========================================

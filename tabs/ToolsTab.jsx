@@ -14,6 +14,7 @@ import { TokenScaleGenerator } from '../components/tools/TokenScaleGenerator';
 import { LivePreview } from '../components/tools/LivePreview';
 import { AccessiblePaletteGenerator } from '../components/tools/AccessiblePaletteGenerator';
 import { DarkModeGenerator } from '../components/tools/DarkModeGenerator';
+import { AIThemeGenerator } from '../components/tools/AIThemeGenerator';
 
 export function ToolsTab() {
   const [activeTool, setActiveTool] = useState(null);
@@ -33,6 +34,35 @@ export function ToolsTab() {
       </div>
 
       <div className="dm-tools-grid">
+        {/* AI Theme Generator - Featured */}
+        <div className="dm-tool-card dm-tool-featured">
+          <div className="dm-tool-header">
+            <div className="dm-tool-icon dm-tool-icon-ai">
+              <Sparkles size={20} />
+            </div>
+            <div className="dm-tool-info">
+              <h4 className="dm-tool-title">AI Theme Generator</h4>
+              <p className="dm-tool-description">
+                Describe your ideal theme in plain language and AI will generate a complete color palette for light and dark modes.
+              </p>
+            </div>
+          </div>
+
+          {activeTool === 'ai' ? (
+            <div className="dm-tool-content">
+              <AIThemeGenerator onClose={closeTool} />
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="dm-button dm-button-primary dm-tool-launch"
+              onClick={() => setActiveTool('ai')}
+            >
+              Launch Tool
+            </button>
+          )}
+        </div>
+
         {/* Smart Font Pairing */}
         <div className="dm-tool-card">
           <div className="dm-tool-header">
@@ -243,9 +273,9 @@ export function ToolsTab() {
               <Sparkles size={20} />
             </div>
             <div className="dm-tool-info">
-              <h4 className="dm-tool-title">More Tools Coming Soon</h4>
+              <h4 className="dm-tool-title">More Coming Soon</h4>
               <p className="dm-tool-description">
-                Color harmony wheel, gradient generator, and more AI-powered design utilities.
+                Color harmony wheel, OKLCH gradient generator, and more design utilities.
               </p>
             </div>
           </div>
