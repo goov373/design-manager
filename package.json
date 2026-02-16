@@ -2,19 +2,30 @@
   "name": "@gavin/design-manager",
   "version": "1.0.0",
   "description": "Standalone design/theme management tool for React applications",
-  "main": "dist/index.js",
-  "module": "dist/index.esm.js",
-  "types": "dist/index.d.ts",
+  "main": "index.js",
+  "module": "index.js",
   "exports": {
     ".": {
-      "import": "./dist/index.esm.js",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "import": "./index.js",
+      "require": "./index.js"
     },
-    "./styles": "./styles/design-manager.css"
+    "./styles": {
+      "style": "./styles/design-manager.css",
+      "default": "./styles/design-manager.css"
+    },
+    "./styles/design-manager.css": {
+      "style": "./styles/design-manager.css",
+      "default": "./styles/design-manager.css"
+    }
   },
   "files": [
-    "dist",
+    "*.js",
+    "*.jsx",
+    "components",
+    "context",
+    "hooks",
+    "lib",
+    "tabs",
     "styles",
     "README.md"
   ],
